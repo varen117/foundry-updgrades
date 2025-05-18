@@ -1,26 +1,30 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
-import {UUPSUpgradeable} from "@openzeppelin/openzeppelin-contracts/contracts/proxy/utils/UUPSUpgradeable.sol";
-import {Ownable} from "";
+pragma solidity ^0.8.19;
 
+import {OwnableUpgradeable} from "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import {Initializable} from "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 
-/**
- * @title BoxV1
- * @author cedar
- * @notice 部署V1合约，然后将其升级到V2
- */
-contract BoxV1 is UUPSUpgradeable{
-    uint256 internal number;
+contract BoxV1 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+    uint256 internal value;
 
-    function getNumber() external view returns(uint256) {
-        return number;
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
     }
 
-    function version() external pure returns(uint256) {
+    function initialize() public initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+    }
+
+    function getValue() public view returns (uint256) {
+        return value;
+    }
+
+    function version() public pure returns (uint256) {
         return 1;
     }
 
-    function _authorizeUpgrade(address newImplementation) internal override {
-    
-    }
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }
